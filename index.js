@@ -1,4 +1,4 @@
- // index.js
+// index.js
 import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
@@ -44,6 +44,26 @@ app.post("/updateStudentAuth", async (req, res) => {
 
   } catch (error) {
     console.error("Auth update error:", error);
+    return res.status(500).json({ success: false, error: error.message });
+  }
+});
+
+// ✅ Delete student from Firebase Auth
+app.post("/deleteStudentAuth", async (req, res) => {
+  try {
+    const { uid } = req.body;
+
+    if (!uid) {
+      return res.status(400).json({ error: "Missing uid" });
+    }
+
+    // 🔑 Delete Firebase Authentication user
+    await admin.auth().deleteUser(uid);
+
+    return res.json({ success: true, message: "User deleted ✅" });
+
+  } catch (error) {
+    console.error("Auth delete error:", error);
     return res.status(500).json({ success: false, error: error.message });
   }
 });
