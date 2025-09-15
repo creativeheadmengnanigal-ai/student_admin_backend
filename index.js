@@ -48,25 +48,26 @@ app.post("/updateStudentAuth", async (req, res) => {
   }
 });
 
-// ✅ Delete student from Firebase Auth
-app.post("/deleteStudentAuth", async (req, res) => {
+ app.post("/deleteStudentAuth", async (req, res) => {
   try {
     const { uid } = req.body;
+    if (!uid) return res.status(400).json({ error: "Missing uid" });
 
-    if (!uid) {
-      return res.status(400).json({ error: "Missing uid" });
-    }
-
-    // 🔑 Delete Firebase Authentication user
+    // Try deleting user
     await admin.auth().deleteUser(uid);
 
     return res.json({ success: true, message: "User deleted ✅" });
 
   } catch (error) {
+    if (error.code === "auth/user-not-found") {
+      // Return success anyway (user already deleted)
+      return res.json({ success: true, message: "User already deleted ✅" });
+    }
     console.error("Auth delete error:", error);
     return res.status(500).json({ success: false, error: error.message });
   }
 });
+
 
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
