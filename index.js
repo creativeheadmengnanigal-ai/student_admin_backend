@@ -68,6 +68,9 @@ app.post("/updateStudentAuth", async (req, res) => {
   }
 });
 
+console.log("Project:", serviceAccount.project_id);
+console.log("Email:", serviceAccount.client_email);
+
 
 app.listen(PORT, () => {
   console.log(`✅ Server running at http://localhost:${PORT}`);
